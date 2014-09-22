@@ -22,7 +22,7 @@
             clauses (nnext clauses)]
         (cond (seq? test) `(unapply ~e ~(first test) ~(next test) ~result ~clauses)
               (symbol? test) `(let [~test ~e] ~result)
-              :else `(if (= ~e ~test) ~result)))
+              :else `(if (= ~e ~test) ~result (match ~e ~@clauses))))
       `(throw (IllegalArgumentException. "match requires an even number of clauses")))))
 
 (defn seq [x]
