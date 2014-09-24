@@ -33,3 +33,9 @@ You can make extractors:
     0 1
     (succ m) (* n (factrial m))))
 ```
+
+## License
+
+Copyright © 2014 Sanshiro Yoshida.
+
+Distributed under the Eclipse Public License.
