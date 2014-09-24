@@ -3,6 +3,15 @@
             [unapply.core :refer [match] :as u]))
 
 (with-test
+  (defn fib [n]
+    (match n
+      0 0
+      1 1
+      _ (+ (fib (- n 1)) (fib (- n 2)))))
+  (is (= (fib 5) 5))
+  (is (= (fib 7) 13)))
+
+(with-test
   (defn sum [xs]
     (match xs
       (u/seq) 0
@@ -17,21 +26,24 @@
       (u/seq (u/when _ number?) xs') (recur xs')
       _ false))
   (is (numbers? [1 2 3]))
-  (is (not (numbers? [1 "2" 3]))))
+  (is (not (numbers? [1 \2 3]))))
 
-(deftest seq-pattern
-  (is (= (match [1 2 3]
-           (u/seq) nil
-           (u/seq h t) [h t])
-         [1 [2 3]])))
+(with-test
+  (defn zip [xs ys]
+    (match [xs ys]
+      (u/vec (u/seq) (u/seq)) '()
+      (u/vec (u/seq x xs') (u/seq y ys')) (cons [x y] (zip xs' ys'))))
+  (is (= (zip [:a :b :c] [1 2 3])
+         [[:a 1] [:b 2] [:c 3]]))
+  (is (= (zip [] []) '())))
 
 (deftest map-pattern
   (is (= (match {:foo 4 :bar 7}
+           (u/map :baz a) a
            (u/map :foo x :bar y) [x y])
          [4 7])))
 
-(deftest guard
-  (is (= (match :foo
-           (u/when _ string?) :bar
-           (u/when _ keyword?) :baz)
-         :baz)))
+(deftest regex-pattern
+  (is (= (match "012-3456"
+           (u/regex #"(\d{3})-(\d{4})" x y) [x y])
+         ["012" "3456"])))
