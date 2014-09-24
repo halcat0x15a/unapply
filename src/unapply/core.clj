@@ -5,7 +5,7 @@
 (declare match)
 
 (defmacro unapply [e f patterns result clauses]
-  (let [vals `vals#]
+  (let [vals (gensym)]
     `(let [~vals ((~f ~patterns) ~e)]
        (if (= ~(count patterns) (count ~vals))
          ~(reduce (fn [a [i pattern]]
@@ -33,7 +33,7 @@
 
 (defmacro map [patterns]
   (if (even? (count patterns))
-    (let [e `e#
+    (let [e (gensym)
           keys (core/map first (partition 2 patterns))]
       `(fn [~e]
          (if (map? ~e)
@@ -41,7 +41,7 @@
     (throw (RuntimeException. "map must contain an even number of forms"))))
 
 (defmacro when [patterns]
-  (let [e `e#
+  (let [e (gensym)
         tests (next patterns)]
     `(fn [~e]
        (if (and ~@(core/map (fn [p] `(~p ~e)) tests))
