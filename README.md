@@ -2,6 +2,8 @@
 
 Scala-like pattern matching library for Clojure.
 
+[![Build Status](https://travis-ci.org/halcat0x15a/unapply.svg)](https://travis-ci.org/halcat0x15a/unapply)
+
 ## Usage
 
 Examples:
