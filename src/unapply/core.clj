@@ -25,8 +25,8 @@
   (let [vals (gensym)]
     `(let [~vals ((~f ~patterns) ~e)]
        (if (identical? ~(count patterns) (count ~vals))
-         ~(reduce (fn [a [i pattern]]
-                    `(match (nth ~vals ~i) ~pattern ~a _# (match ~e ~@clauses)))
+         ~(reduce (fn [result [n pattern]]
+                    `(match (nth ~vals ~n) ~pattern ~result _# (match ~e ~@clauses)))
                   result
                   (reverse (map-indexed vector patterns)))
          (match ~e ~@clauses)))))
@@ -60,7 +60,7 @@
       `(fn [~e]
          (if (and (map? ~e) ~@(core/map (fn [k] `(contains? ~e ~k)) keys))
            ~(reduce (fn [v k] (conj v k `(get ~e ~k))) [] keys))))
-    (throw (RuntimeException. "map must contain an even number of forms"))))
+    (throw (IllegalArgumentException. "map must contain an even number of patterns"))))
 
 (defmacro when [patterns]
   (let [e (gensym)
@@ -70,7 +70,7 @@
          [~e ~@tests]))))
 
 (defmacro regex [patterns]
-  `(fn [e#]
-     (let [re# ~(first patterns)]
-       (if-let [result# (re-matches re# e#)]
-         (cons re# (next result#))))))
+  (let [re (first patterns)]
+    `(fn [e#]
+       (if-let [result# (re-matches ~re e#)]
+         (cons ~re (next result#))))))
