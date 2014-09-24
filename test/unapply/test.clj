@@ -47,3 +47,15 @@
   (is (= (match "012-3456"
            (u/regex #"(\d{3})-(\d{4})" x y) [x y])
          ["012" "3456"])))
+
+(defmacro succ [patterns]
+  '(fn [e]
+     (if (and (integer? e) (pos? e))
+       [(dec e)])))
+
+(with-test
+  (defn factrial [n]
+    (match n
+      0 1
+      (succ m) (* n (factrial m))))
+  (is (= (factrial 5) 120)))
