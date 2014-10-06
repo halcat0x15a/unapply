@@ -37,7 +37,7 @@
       (let [pattern (first clauses)
             result (second clauses)
             clauses (nnext clauses)]
-        (cond (seq? pattern) `(unapply ~e ~(first pattern) ~(next pattern) ~result ~clauses)
+        (cond (and (seq? pattern) (next pattern)) `(unapply ~e ~(first pattern) ~(next pattern) ~result ~clauses)
               (symbol? pattern) `(let [~pattern ~e] ~result)
               :else `(if (eq ~e ~pattern) ~result (match ~e ~@clauses))))
       `(throw (IllegalArgumentException. "match requires an even number of clauses")))))
@@ -50,8 +50,8 @@
 (defmacro seq* [patterns]
   (let [n (dec (count patterns))]
     `(fn [e#]
-       (if (and (sequential? e#) (<= n (count e#)))
-         (concat (take ~n e#) [(nthnext e# ~n)])))))
+       (if (and (sequential? e#) (<= ~n (count e#)))
+         (concat (take ~n e#) [(drop ~n e#)])))))
 
 (defmacro map [patterns]
   (if (even? (count patterns))

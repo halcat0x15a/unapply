@@ -14,16 +14,16 @@
 (with-test
   (defn sum [xs]
     (match xs
-      (u/seq) 0
-      (u/seq x xs') (+ x (sum xs'))))
+      () 0
+      (u/seq* x xs') (+ x (sum xs'))))
   (is (= (sum [1 2 3]) 6))
   (is (= (sum [2 4 8]) 14)))
 
 (with-test
   (defn numbers? [xs]
     (match xs
-      (u/seq) true
-      (u/seq (u/when _ number?) xs') (recur xs')
+      () true
+      (u/seq* (u/when _ number?) xs') (recur xs')
       _ false))
   (is (numbers? [1 2 3]))
   (is (not (numbers? [1 \2 3]))))
@@ -31,11 +31,11 @@
 (with-test
   (defn zip [xs ys]
     (match [xs ys]
-      (u/vec (u/seq) (u/seq)) '()
-      (u/vec (u/seq x xs') (u/seq y ys')) (cons [x y] (zip xs' ys'))))
+      (u/seq () ()) ()
+      (u/seq (u/seq* x xs') (u/seq* y ys')) (cons [x y] (zip xs' ys'))))
   (is (= (zip [:a :b :c] [1 2 3])
          [[:a 1] [:b 2] [:c 3]]))
-  (is (= (zip [] []) '())))
+  (is (= (zip [] []) ())))
 
 (deftest map-pattern
   (is (= (match {:foo 4 :bar 7}
@@ -49,9 +49,9 @@
          ["012" "3456"])))
 
 (defmacro succ [patterns]
-  '(fn [e]
-     (if (and (integer? e) (pos? e))
-       [(dec e)])))
+  `(fn [e#]
+     (if (and (integer? e#) (pos? e#))
+       [(dec e#)])))
 
 (with-test
   (defn factrial [n]
