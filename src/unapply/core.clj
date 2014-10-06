@@ -1,5 +1,5 @@
 (ns unapply.core
-  (:refer-clojure :exclude [vec seq map when])
+  (:refer-clojure :exclude [seq map when])
   (:require [clojure.core :as core])
   (:import [java.util.regex Pattern]))
 
@@ -42,15 +42,15 @@
               :else `(if (eq ~e ~pattern) ~result (match ~e ~@clauses))))
       `(throw (IllegalArgumentException. "match requires an even number of clauses")))))
 
-(defmacro vec [patterns]
-  '(fn [e]
-     (if (sequential? e)
-       e)))
-
 (defmacro seq [patterns]
+  `(fn [e#]
+     (if (sequential? e#)
+       e#)))
+
+(defmacro seq* [patterns]
   (let [n (dec (count patterns))]
     `(fn [e#]
-       (if (and (sequential? e#) (pos? (count e#)))
+       (if (and (sequential? e#) (<= n (count e#)))
          (concat (take ~n e#) [(nthnext e# ~n)])))))
 
 (defmacro map [patterns]
