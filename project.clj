@@ -1,4 +1,4 @@
-(defproject unapply "0.1.2"
+(defproject unapply "0.2.0"
   :description "Pattern matching library"
   :url "https://github.com/halcat0x15a/unapply"
   :license {:name "Eclipse Public License"

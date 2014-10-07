@@ -15,22 +15,21 @@ Examples:
 
 (defn sum [xs]
   (match xs
-    (u/seq) 0
-    (u/seq x xs') (+ x (sum xs'))))
+    () 0
+    (u/cons x xs') (+ x (sum xs'))))
 
 (defn zip [xs ys]
   (match [xs ys]
-    (u/vec (u/seq) (u/seq)) '()
-    (u/vec (u/seq x xs') (u/seq y ys')) (cons [x y] (zip xs' ys'))))
+    [() ()] ()
+    [(u/cons x xs') (u/cons y ys')] (cons [x y] (zip xs' ys'))))
 ```
 
 You can make extractors:
 
 ```clojure
-(defmacro succ [patterns]
-  '(fn [e]
-     (if (and (integer? e) (pos? e))
-       [(dec e)])))
+(defn succ [x]
+  (if (and (integer? x) (pos? x))
+    [(dec x)]))
 
 (defn factrial [n]
   (match n
